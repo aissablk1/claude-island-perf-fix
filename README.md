@@ -28,12 +28,14 @@ python3 claude-island-state.py
 
 ### Impact sur une session de 2 heures
 
-| Metrique | Original (Python x11 events) | Corrige |
+| Metrique | Original (Python) | Corrige (Bash+Perl) |
 |---|---|---|
-| Spawns/minute | 30-40 | **4-6** |
-| CPU hooks/minute | 2-3s | **<0.5s** |
-| Process spawns/session (2h) | **~4000** | **~600** |
-| Contribution RAM pics | ~200-500 Mo | **~50 Mo** |
+| Temps par spawn | ~73ms | **~20ms** |
+| CPU hooks/minute | 2-3s | **~0.6-0.8s** |
+| Guard si app fermee | non (73ms quand meme) | **~0ms (exit immediat)** |
+| Processes par event | 2 (python3 + ps) | **3 (bash + jq + nc)** |
+| Securite socket | aucune verification | **verification proprietaire** |
+| tool_input expose | complet (commandes, fichiers) | **filtre (metadata seule)** |
 
 ## La solution
 
@@ -114,11 +116,22 @@ cp ~/.claude/hooks/claude-island-state.py.backup ~/.claude/hooks/claude-island-s
 cp ~/.claude/settings.json.backup ~/.claude/settings.json
 ```
 
+## Configuration
+
+Le chemin du socket est configurable via variable d'environnement :
+
+```bash
+export CLAUDE_ISLAND_SOCKET="/path/to/custom/socket.sock"
+```
+
+Par defaut : `/tmp/claude-island.sock`
+
 ## Compatibilite
 
 - macOS 12+ (Monterey et superieur)
 - Perl 5.14+ (pre-installe sur macOS)
 - jq (installer via `brew install jq` si absent)
+- nc (netcat, pre-installe sur macOS)
 - Claude Code CLI
 - Claude Island app
 
@@ -128,8 +141,11 @@ cp ~/.claude/settings.json.backup ~/.claude/settings.json
 hooks/
   claude-island-state-fast.sh   # Script principal (bash+jq+nc)
   claude-island-state-fast.pl   # Fallback Perl pour PermissionRequest
-  claude-island-state.py        # Original Python (reference)
+                                # (utilisable aussi en standalone pour tous les events)
+  claude-island-state.py        # Original Python (inclus pour reference/comparaison)
 install.sh                      # Installateur automatique
+LICENSE                         # MIT
+.gitignore
 README.md                       # Ce fichier
 ```
 

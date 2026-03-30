@@ -10,7 +10,7 @@ use JSON::PP;
 use IO::Socket::UNIX;
 use IO::Select;
 
-my $SOCKET_PATH = '/tmp/claude-island.sock';
+my $SOCKET_PATH = $ENV{CLAUDE_ISLAND_SOCKET} // '/tmp/claude-island.sock';
 my $TIMEOUT     = 300;  # 5 minutes for permission decisions
 my $MAX_INPUT   = 65536;  # 64 Ko max
 

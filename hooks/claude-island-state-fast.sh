@@ -5,7 +5,7 @@
 # For PermissionRequest: delegates to Perl for bidirectional I/O
 # ─────────────────────────────────────────────────────────────────────────────
 
-SOCKET="/tmp/claude-island.sock"
+SOCKET="${CLAUDE_ISLAND_SOCKET:-/tmp/claude-island.sock}"
 
 # Guard: exit if socket absent or not owned by current user
 [ -S "$SOCKET" ] || exit 0

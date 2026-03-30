@@ -13,7 +13,14 @@ echo ""
 # Prerequis
 command -v perl >/dev/null 2>&1 || { echo "ERREUR: perl requis"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "ERREUR: jq requis (brew install jq)"; exit 1; }
+command -v nc >/dev/null 2>&1 || { echo "ERREUR: nc (netcat) requis"; exit 1; }
 perl -e 'use JSON::PP; use IO::Socket::UNIX; use IO::Select' 2>/dev/null || { echo "ERREUR: modules Perl core manquants"; exit 1; }
+
+# Creer le dossier hooks s'il n'existe pas
+if [ ! -d "$HOOKS_DIR" ]; then
+  echo "[WARN] $HOOKS_DIR n'existe pas — creation..."
+  mkdir -p "$HOOKS_DIR"
+fi
 
 # Backup original
 if [ -f "$HOOKS_DIR/claude-island-state.py" ]; then
